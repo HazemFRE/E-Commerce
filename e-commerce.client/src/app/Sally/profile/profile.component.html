@@ -1,0 +1,308 @@
+
+<main class="main-wrapper">
+  <!-- Start Breadcrumb Area  -->
+  <div class="axil-breadcrumb-area">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-lg-6 col-md-8">
+          <div class="inner">
+            <ul class="axil-breadcrumb">
+              <li class="axil-breadcrumb-item"><a href="index.html">Home</a></li>
+              <li class="separator"></li>
+              <li class="axil-breadcrumb-item active" aria-current="page">My Account</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- End Breadcrumb Area  -->
+  <!-- Start My Account Area  -->
+  <div class="axil-dashboard-area axil-section-gap">
+    <div class="container">
+      <div class="axil-dashboard-warp">
+        <div class="axil-dashboard-author">
+          <div class="media">
+            <div class="thumbnail">
+              <img  *ngIf="!addressForm.value.image" [src]="user.image">
+              <img *ngIf="addressForm.value.image" [src]="addressForm.value.image" >
+
+            </div>
+            <div class="media-body">
+              <h5 class="title mb-0 ms-5">{{user.name}}</h5>
+              <span class="joining-date ms-5">{{user.email}}</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xl-3 col-md-4">
+            <aside class="axil-dashboard-aside">
+              <nav class="axil-dashboard-nav">
+                <div class="nav nav-tabs" role="tablist">
+                  <a class="nav-item nav-link active" data-bs-toggle="tab" href="#nav-dashboard" role="tab" aria-selected="true"><i class="fas fa-th-large"></i>Dashboard</a>
+                  <a class="nav-item nav-link" data-bs-toggle="tab" href="#nav-orders" role="tab" aria-selected="false"><i class="fas fa-shopping-basket"></i>Orders</a>
+                  <a class="nav-item nav-link" data-bs-toggle="tab" href="#nav-voucher" role="tab" aria-selected="false"><i class="fas fa-ticket-alt"></i>Vouchers</a>
+                  <a class="nav-item nav-link" data-bs-toggle="tab" href="#nav-address" role="tab" aria-selected="false"><i class="fas fa-user"></i>Account Details</a>
+                  <a class="nav-item nav-link" data-bs-toggle="tab" href="#nav-account" role="tab" aria-selected="false"><i class="fas fa-lock"></i>Change Password</a>
+                  <a class="nav-item nav-link" (click)="logout()"><i class="fal fa-sign-out"></i>Logout</a>
+                </div>
+              </nav>
+            </aside>
+          </div>
+          <div class="col-xl-9 col-md-9">
+            <div class="tab-content">
+              <div class="tab-pane fade show active" id="nav-dashboard" role="tabpanel">
+                <div class="axil-dashboard-overview">
+                  <div class="welcome-text">Hello {{user.name}}</div>
+                  <p>From your account dashboard you can view your recent orders, manage your billing and addresses, and edit your password and account details.</p>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="nav-orders" role="tabpanel">
+                <div class="axil-dashboard-order">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">Order</th>
+                          <th scope="col">Date</th>
+                          <th scope="col">Total</th>
+                          <th scope="col">status</th>
+                          <th scope="col">shipping</th>
+                          <th scope="col">coupon</th>
+                          <th scope="col">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let order of orders">
+                          <th scope="row">#{{order.id}}</th>
+                          <td>{{order.date}}</td>
+                          <td>{{order.amount}}</td>
+                          <td>{{order.status}}</td>
+                          <td>{{order.shipping}}</td>
+                          <td>{{order.coupon}}</td>
+                          <td><button (click)="openModal(order.id)" data-bs-toggle="modal" data-bs-target="#itemsModal" class="axil-btn view-btn">View items</button></td>
+                        </tr>
+
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-pane fade" id="nav-voucher" role="tabpanel">
+                <div class="axil-dashboard-order">
+                  <div class="table-responsive">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th scope="col">voucher</th>
+                          <th scope="col">description</th>
+                          <th scope="col">status</th>
+                          <th scope="col">Discount</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let voucher of vouchers">
+                          <th scope="row">{{voucher.name}}</th>
+                          <td>{{voucher.description}}</td>
+                          <td>{{voucher.states}}</td>
+                          <td>{{voucher.discount}}</td>
+                        </tr>
+
+
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                </div>
+
+                <div class="modal fade" id="itemsModal" data-bs-backdrop="static" tabindex="-1" aria-labelledby="itemsModalLabel" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-centered modal-lg">
+                    <!-- إضافة class modal-dialog-centered -->
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h5 class="modal-title" id="itemsModalLabel">Order Items</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body">
+                        <p *ngIf="items.length === 0">No items found for this order.</p>
+                        <table class="table" *ngIf="items.length>0 ">
+                          <thead>
+                            <tr>
+                              <th scope="col">Product</th>
+                              <th scope="col">Price</th>
+                              <th scope="col">Quantity</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            <tr *ngFor="let item of items">
+                              <th scope="row">#{{item.product_name}}</th>
+                              <td>{{item.product_price}}</td>
+                              <td>{{item.product_quantity}}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="tab-pane fade show " id="nav-account" role="tabpanel">
+                  <div class="col-lg-9">
+                    <div class="axil-dashboard-account">
+                      <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()" class="account-details-form">
+                        <div class="row">
+                          <div class="col-12">
+                            <h5 class="title m-5">Password Change</h5>
+
+                            <!-- رسائل التنبيه -->
+                            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+                            <div class="form-group my-5">
+                              <label>Password</label>
+                              <input type="password" class="form-control" formControlName="currentPassword">
+                            </div>
+                            <div class="form-group my-5">
+                              <label>New Password</label>
+                              <input type="password" class="form-control" formControlName="newPassword">
+                            </div>
+                            <div class="form-group my-5">
+                              <label>Confirm New Password</label>
+                              <input type="password" class="form-control" formControlName="confirmNewPassword">
+                            </div>
+                            <div class="form-group mb--0">
+                              <button type="submit" class="axil-btn" [disabled]="changePasswordForm.invalid">Save Changes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+
+                <div class="tab-pane fade" id="nav-address" role="tabpanel">
+                  <div class="axil-dashboard-address">
+                    <p class="notice-text">You can edit your information from here.</p>
+                    <div class="row row--30">
+                      <div class="col-lg-6">
+                        <div class="address-info mb--40">
+                          <div class="addrss-header d-flex align-items-center justify-content-between">
+                            <h4 class="title mb-0">Personal Details</h4>
+                            <a href="#" class="address-edit" (click)="openAddressModal(addressModal)">
+                              <i class="far fa-edit"></i>
+                            </a>
+                          </div>
+                          <ul class="address-details">
+                            <li><b>Name:</b> {{user.name}}</li>
+                            <li><b>Email:</b> {{user.email}}</li>
+                            <li><b>Phone</b> {{user.phone}}</li>
+                            <li><b>Payment:</b> {{user.payment}}</li>
+                            <li class="mt--30">
+                              <p class="notice-text">The following addresses will be used on the checkout page by default.</p>
+                              <b>Address:</b> {{user.address}}
+                            </li>
+                          </ul>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- المودال باستخدام ng-template -->
+                <ng-template #addressModal let-modal>
+                  <div class="modal-header">
+                    <h5 class="modal-title">Edit Profile</h5>
+                    <button type="button" class="btn-close" (click)="modal.dismiss()" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    <div class="thumbnail">
+                      <img [src]="user.image">
+                    </div>
+                    <form [formGroup]="addressForm">
+                      <div class="mb-3">
+                        <label for="name" class="form-label">Name</label>
+                        <input type="text" class="form-control" id="name" formControlName="name">
+                      </div>
+                      <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" formControlName="email">
+                      </div>
+                      <div class="mb-3">
+                        <label for="phone" class="form-label">Phone</label>
+                        <input type="tel" class="form-control" id="phone" formControlName="phone">
+                      </div>
+                      <div class="mb-3">
+                        <label for="payment" class="form-label">Payment</label>
+
+                        <!-- ✅ تحويل input إلى select مع خيارات -->
+                        <select class="form-control" id="payment" formControlName="payment">
+                          <option value="orangeMoney">Orange Money</option>
+                          <option value="credit">Credit</option>
+                        </select>
+                      </div>
+
+                      <div class="mb-3">
+                        <label for="image" class="form-label">Image</label>
+                        <input type="file" class="form-control" id="image" formControlName="image" (change)="onFileSelected($event)">
+                      </div>
+                      <div class="mb-3">
+                        <label for="address" class="form-label">Address</label>
+                        <textarea class="form-control" id="address" rows="3" formControlName="address"></textarea>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" (click)="modal.dismiss()" style="font-size:16px">cancel</button>
+                    <button type="button" class="btn btn-primary" (click)="saveAddress(); modal.close()" style="font-size:16px">save</button>
+                  </div>
+                </ng-template>
+
+
+                <div class="tab-pane fade show " id="nav-account" role="tabpanel">
+                  <div class="col-lg-9">
+                    <div class="axil-dashboard-account">
+                      <form [formGroup]="changePasswordForm" (ngSubmit)="changePassword()" class="account-details-form">
+                        <div class="row">
+                          <div class="col-12">
+                            <h5 class="title m-5">Password Change</h5>
+
+                            <!-- رسائل التنبيه -->
+                            <div *ngIf="successMessage" class="alert alert-success">{{ successMessage }}</div>
+                            <div *ngIf="errorMessage" class="alert alert-danger">{{ errorMessage }}</div>
+
+                            <div class="form-group">
+                              <label>Password</label>
+                              <input type="password" class="form-control" formControlName="currentPassword">
+                            </div>
+                            <div class="form-group">
+                              <label>New Password</label>
+                              <input type="password" class="form-control" formControlName="newPassword">
+                            </div>
+                            <div class="form-group">
+                              <label>Confirm New Password</label>
+                              <input type="password" class="form-control" formControlName="confirmNewPassword">
+                            </div>
+                            <div class="form-group mb--0">
+                              <button type="submit" class="axil-btn" [disabled]="changePasswordForm.invalid">Save Changes</button>
+                            </div>
+                          </div>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+
+
+
+              </div>
+            </div>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</main>
